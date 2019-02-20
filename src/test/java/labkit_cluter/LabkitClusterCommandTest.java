@@ -1,6 +1,7 @@
 
 package labkit_cluter;
 
+import cz.it4i.parallel.TestParadigm;
 import labkit_cluster.JsonIntervals;
 import labkit_cluster.LabkitClusterCommand;
 import labkit_cluster.MyN5;
@@ -10,9 +11,7 @@ import net.imglib2.img.cell.CellGrid;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.util.Intervals;
 import org.scijava.Context;
-import org.scijava.parallel.ParallelService;
 import org.scijava.parallel.ParallelizationParadigm;
-import org.scijava.parallel.utils.StartImageJServer;
 
 import java.util.AbstractList;
 import java.util.HashMap;
@@ -27,8 +26,6 @@ public class LabkitClusterCommandTest {
 		"/home/arzt/tmp/output/result.xml";
 
 	private Context context = new Context();
-	private ParallelService parallelService = context.service(
-		ParallelService.class);
 
 	public static void main(String... args) throws ExecutionException,
 		InterruptedException
@@ -39,15 +36,9 @@ public class LabkitClusterCommandTest {
 	public void startServerAndRun() throws ExecutionException,
 		InterruptedException
 	{
-		Process process = StartImageJServer.startImageJServerIfNecessary(
-			"/home/arzt/Applications/Fiji.app/");
-		try (ParallelizationParadigm paradigm = StartImageJServer.getTestParadigm(
-			parallelService))
+		try (ParallelizationParadigm paradigm = TestParadigm.localImageJServer( "/home/arzt/Applications/Fiji.app/ImageJ-linux64", context ))
 		{
 			run(paradigm);
-		}
-		finally {
-			if (process != null) process.destroy();
 		}
 	}
 
@@ -60,10 +51,9 @@ public class LabkitClusterCommandTest {
 			new SpimDataInputImage(inputXml, 0).interval());
 		CellGrid grid = new CellGrid(dimensions, new int[] { 100, 100, 100 });
 		MyN5.createDataset(OUTPUT_N5_DIRECTORY, grid);
-		List<Map<String, ?>> parameters = initializeParameters(OUTPUT_N5_DIRECTORY,
+		List<Map<String, Object>> parameters = initializeParameters(OUTPUT_N5_DIRECTORY,
 			inputXml, value, grid);
-		paradigm.runAll(nCopies(LabkitClusterCommand.class, parameters.size()),
-			parameters);
+		paradigm.runAll(LabkitClusterCommand.class, parameters);
 		System.out.println("Results written to: " + OUTPUT_N5_DIRECTORY);
 	}
 
@@ -82,7 +72,7 @@ public class LabkitClusterCommandTest {
 		};
 	}
 
-	private List<Map<String, ?>> initializeParameters(String outputPath,
+	private List<Map<String, Object>> initializeParameters(String outputPath,
 		String inputXml, String value, CellGrid grid)
 	{
 		List<Interval> cells = listIntervals(grid);

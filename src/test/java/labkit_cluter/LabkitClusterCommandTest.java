@@ -1,7 +1,6 @@
 
 package labkit_cluter;
 
-import cz.it4i.parallel.ImageJServerParadigm;
 import labkit_cluster.JsonIntervals;
 import labkit_cluster.LabkitClusterCommand;
 import labkit_cluster.MyN5;
@@ -13,10 +12,9 @@ import net.imglib2.util.Intervals;
 import org.scijava.Context;
 import org.scijava.parallel.ParallelService;
 import org.scijava.parallel.ParallelizationParadigm;
-import org.scijava.parallel.ParallelizationParadigmProfile;
+import org.scijava.parallel.utils.StartImageJServer;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +24,7 @@ import java.util.stream.Collectors;
 public class LabkitClusterCommandTest {
 
 	public final static String OUTPUT_N5_DIRECTORY =
-		"/home/training/dd-18-37-29/output";
-	final String CLASSIFIER_PATH =
-		"/home/training/dd-18-37-29/input/classifier.classifier";
-	private final String inputXml = "/home/training/dd-18-37-29/input/export.xml";
-	private static List<String> hosts = Arrays.asList("localhost:10001",
-		"localhost:10002", "localhost:10003", "localhost:10004");
+		"/home/arzt/tmp/output/result.xml";
 
 	private Context context = new Context();
 	private ParallelService parallelService = context.service(
@@ -46,37 +39,29 @@ public class LabkitClusterCommandTest {
 	public void startServerAndRun() throws ExecutionException,
 		InterruptedException
 	{
-		// Process process = StartImageJServer.startImageJServerIfNecessary(
-		// "/home/arzt/Applications/Fiji.app/");
-		try (ParallelizationParadigm paradigm = getTestParadigm(parallelService)) {
+		Process process = StartImageJServer.startImageJServerIfNecessary(
+			"/home/arzt/Applications/Fiji.app/");
+		try (ParallelizationParadigm paradigm = StartImageJServer.getTestParadigm(
+			parallelService))
+		{
 			run(paradigm);
 		}
 		finally {
-			// if (process != null) process.destroy();
+			if (process != null) process.destroy();
 		}
 	}
 
-	public static ParallelizationParadigm getTestParadigm(
-		ParallelService parallelService)
-	{
-		parallelService.deleteProfiles();
-		parallelService.addProfile(new ParallelizationParadigmProfile(
-			ImageJServerParadigm.class, "lonelyBiologist01"));
-		parallelService.selectProfile("lonelyBiologist01");
-		ParallelizationParadigm paradigm = parallelService.getParadigm();
-		((ImageJServerParadigm) paradigm).setHosts(hosts);
-		paradigm.init();
-		return paradigm;
-	}
-
 	private void run(ParallelizationParadigm paradigm) {
+		final String inputXml =
+			"/home/arzt/Documents/Datasets/Mouse Brain/hdf5/export.xml";
+		final String value =
+			"/home/arzt/Documents/Datasets/Mouse Brain/hdf5/classifier.classifier";
 		final long[] dimensions = Intervals.dimensionsAsLongArray(
-			new SpimDataInputImage("/home/arzt/salomon/input/export.xml", 0)
-				.interval());
+			new SpimDataInputImage(inputXml, 0).interval());
 		CellGrid grid = new CellGrid(dimensions, new int[] { 100, 100, 100 });
-		MyN5.createDataset("/home/arzt/salomon/output", grid);
+		MyN5.createDataset(OUTPUT_N5_DIRECTORY, grid);
 		List<Map<String, ?>> parameters = initializeParameters(OUTPUT_N5_DIRECTORY,
-			inputXml, CLASSIFIER_PATH, grid);
+			inputXml, value, grid);
 		paradigm.runAll(nCopies(LabkitClusterCommand.class, parameters.size()),
 			parameters);
 		System.out.println("Results written to: " + OUTPUT_N5_DIRECTORY);

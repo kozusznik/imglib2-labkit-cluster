@@ -1,10 +1,7 @@
 
-package labkit_cluter;
+package labkit_cluster;
 
 import cz.it4i.parallel.TestParadigm;
-import labkit_cluster.JsonIntervals;
-import labkit_cluster.LabkitClusterCommand;
-import labkit_cluster.MyN5;
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
 import net.imglib2.img.cell.CellGrid;

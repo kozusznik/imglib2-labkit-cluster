@@ -1,5 +1,5 @@
 
-package labkit_cluter;
+package labkit_cluster;
 
 import bdv.util.BdvFunctions;
 import net.imglib2.RandomAccessibleInterval;

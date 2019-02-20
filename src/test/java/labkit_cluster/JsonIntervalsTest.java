@@ -1,7 +1,6 @@
 
-package labkit_cluter;
+package labkit_cluster;
 
-import labkit_cluster.JsonIntervals;
 import net.imglib2.FinalInterval;
 import net.imglib2.util.Intervals;
 import org.junit.Test;

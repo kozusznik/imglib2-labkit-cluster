@@ -1,8 +1,7 @@
 
-package labkit_cluter;
+package labkit_cluster;
 
 import bdv.util.BdvFunctions;
-import labkit_cluster.MyN5;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.cell.CellGrid;

@@ -1,5 +1,5 @@
 
-package labkit_cluster;
+package labkit_cluster.headless;
 
 import com.google.gson.Gson;
 import net.imglib2.FinalInterval;

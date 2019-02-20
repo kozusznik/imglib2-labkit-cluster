@@ -1,8 +1,9 @@
 
-package labkit_cluster;
+package labkit_cluster.headless;
 
 import net.imglib2.FinalInterval;
 import net.imglib2.util.Intervals;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +16,7 @@ public class JsonIntervalsTest {
 
 	@Test
 	public void testToJson() {
-		assertEquals(json, JsonIntervals.toJson(interval));
+		Assert.assertEquals(json, JsonIntervals.toJson(interval));
 	}
 
 	@Test

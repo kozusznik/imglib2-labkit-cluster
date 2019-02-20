@@ -1,5 +1,5 @@
 
-package labkit_cluster;
+package labkit_cluster.headless;
 
 import cz.it4i.parallel.TestParadigm;
 import net.imglib2.FinalInterval;
@@ -50,7 +50,7 @@ public class LabkitClusterCommandTest {
 		MyN5.createDataset(OUTPUT_N5_DIRECTORY, grid);
 		List<Map<String, Object>> parameters = initializeParameters(OUTPUT_N5_DIRECTORY,
 			inputXml, value, grid);
-		paradigm.runAll(LabkitClusterCommand.class, parameters);
+		paradigm.runAll( LabkitClusterCommand.class, parameters);
 		System.out.println("Results written to: " + OUTPUT_N5_DIRECTORY);
 	}
 

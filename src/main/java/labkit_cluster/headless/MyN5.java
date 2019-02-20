@@ -1,5 +1,5 @@
 
-package labkit_cluster;
+package labkit_cluster.headless;
 
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;

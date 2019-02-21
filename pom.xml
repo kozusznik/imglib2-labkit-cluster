@@ -132,11 +132,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.scijava</groupId>
-			<artifactId>scijava-parallel</artifactId>
-			<version>0.1.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scijava</groupId>
 			<artifactId>scijava-parallel-imagej-server</artifactId>
 			<version>0.1.1-SNAPSHOT</version>
 		</dependency>

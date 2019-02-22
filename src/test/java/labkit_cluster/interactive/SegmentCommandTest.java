@@ -1,17 +1,22 @@
 
 package labkit_cluster.interactive;
 
+import bdv.util.BdvFunctions;
 import cz.it4i.parallel.TestParadigm;
 import io.scif.services.DatasetIOService;
 import labkit_cluster.headless.JsonIntervals;
 import net.imagej.Dataset;
 import net.imagej.DefaultDataset;
 import net.imagej.ImgPlus;
-import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.cache.img.CellLoader;
+import net.imglib2.cache.img.DiskCachedCellImg;
+import net.imglib2.cache.img.DiskCachedCellImgFactory;
+import net.imglib2.cache.img.DiskCachedCellImgOptions;
 import net.imglib2.img.ImgView;
 import net.imglib2.img.array.ArrayImgs;
+import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -21,12 +26,15 @@ import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SegmentCommandTest
 {
+	public final static String inputXml = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/export.xml";
+	public final static String classifier = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/classifier.classifier";
 
 	@Parameter
 	private Context context;
@@ -39,9 +47,12 @@ public class SegmentCommandTest
 
 	public static void main(String... args)
 	{
-		final SegmentCommandTest segmentCommandTest = new SegmentCommandTest();
-		new Context().inject( segmentCommandTest );
-		segmentCommandTest.run();
+		new SegmentCommandTest( new Context() ).run();
+	}
+
+	public SegmentCommandTest( Context context )
+	{
+		context.inject( this );
 	}
 
 	public void run()
@@ -50,27 +61,21 @@ public class SegmentCommandTest
 		{
 			run( paradigm );
 		}
-		catch ( IOException e )
-		{
-			throw new RuntimeException( e );
-		}
 	}
 
-	private void run( ParallelizationParadigm paradigm ) throws IOException
+	private void run( ParallelizationParadigm paradigm )
 	{
-		final String inputXml = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/export.xml";
-		final String value = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/classifier.classifier";
 		final Interval interval = Intervals.createMinSize( 50, 0, 0, 50, 50, 50 );
 		final RandomAccessibleInterval< UnsignedByteType > output = createEmptyImage( interval );
-		segment( paradigm, inputXml, value, output );
+		segment( paradigm, output );
 		uiService.show(Views.zeroMin( output ));
 	}
 
-	private void segment( ParallelizationParadigm paradigm, String inputXml, String value, RandomAccessibleInterval< UnsignedByteType > output )
+	public void segment( ParallelizationParadigm paradigm, RandomAccessibleInterval< UnsignedByteType > output )
 	{
 		Map<String, Object> map = new HashMap<>();
 		map.put("input", inputXml );
-		map.put("classifier", value );
+		map.put("classifier", classifier );
 		map.put("interval", JsonIntervals.toJson( output ));
 		map.put( "output", wrapAsDataset( output ) );
 		paradigm.runAll( SegmentCommand.class, Collections.singletonList( map ) );

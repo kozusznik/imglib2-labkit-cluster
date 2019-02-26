@@ -1,7 +1,6 @@
 
 package labkit_cluster.interactive;
 
-import bdv.util.BdvFunctions;
 import cz.it4i.parallel.TestParadigm;
 import io.scif.services.DatasetIOService;
 import labkit_cluster.headless.JsonIntervals;
@@ -10,13 +9,8 @@ import net.imagej.DefaultDataset;
 import net.imagej.ImgPlus;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.cache.img.CellLoader;
-import net.imglib2.cache.img.DiskCachedCellImg;
-import net.imglib2.cache.img.DiskCachedCellImgFactory;
-import net.imglib2.cache.img.DiskCachedCellImgOptions;
 import net.imglib2.img.ImgView;
 import net.imglib2.img.array.ArrayImgs;
-import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -25,8 +19,6 @@ import org.scijava.parallel.ParallelizationParadigm;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

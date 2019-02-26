@@ -1,22 +1,16 @@
 package labkit_cluster.interactive;
 
 import labkit_cluster.headless.JsonIntervals;
-import labkit_cluster.headless.LabkitClusterCommand;
 import net.imagej.Dataset;
 import net.imagej.DefaultDataset;
 import net.imagej.ImgPlus;
-import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.ImgView;
-import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.labeling.Labeling;
 import net.imglib2.labkit.segmentation.weka.TrainableSegmentationSegmenter;
-import net.imglib2.loops.LoopBuilder;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
-import net.imglib2.util.Intervals;
 import net.imglib2.util.Pair;
 import net.imglib2.view.Views;
 import org.scijava.Context;

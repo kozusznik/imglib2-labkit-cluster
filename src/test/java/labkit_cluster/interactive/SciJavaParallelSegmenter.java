@@ -9,6 +9,7 @@ import net.imglib2.img.ImgView;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.labeling.Labeling;
 import net.imglib2.labkit.segmentation.weka.TrainableSegmentationSegmenter;
+import net.imglib2.labkit.utils.CheckedExceptionUtils;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
@@ -18,6 +19,8 @@ import org.scijava.parallel.ParallelizationParadigm;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -62,14 +65,13 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 	@Override
 	public void segment( RandomAccessibleInterval< ? > image, RandomAccessibleInterval< ? extends IntegerType< ? > > labels )
 	{
-		segment( paradigm, filename, model.getAbsolutePath(), labels );
+		CheckedExceptionUtils.run( () -> segment( paradigm, filename, model.getAbsolutePath(), labels ) );
 	}
 
-	private void segment( ParallelizationParadigm paradigm, String inputXml, String classifier, RandomAccessibleInterval< ? extends IntegerType<?> > output )
-	{
+	private void segment( ParallelizationParadigm paradigm, String inputXml, String classifier, RandomAccessibleInterval<? extends IntegerType<?>> output ) throws IOException {
 		Map<String, Object> map = new HashMap<>();
 		map.put("input", inputXml );
-		map.put("classifier", classifier );
+		map.put("classifier", new String( Files.readAllBytes( Paths.get( classifier ) ) ) );
 		map.put("interval", JsonIntervals.toJson( output ));
 		map.put( "output", wrapAsDataset( output ) );
 		paradigm.runAll( SegmentCommand.class, Collections.singletonList( map ) );

@@ -1,5 +1,9 @@
 package labkit_cluster.interactive;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import labkit_cluster.headless.JsonIntervals;
 import net.imagej.Dataset;
 import net.imglib2.Interval;
@@ -37,9 +41,22 @@ public class SegmentCommand implements Command
 	{
 		SpimDataInputImage inputImage = new SpimDataInputImage( input, 0 );
 		TrainableSegmentationSegmenter segmenter = new TrainableSegmentationSegmenter(context, inputImage);
-		segmenter.openModel( classifier );
+		segmenter.openModel( storeToFile( classifier ) );
 		Interval interval = JsonIntervals.fromJson( this.interval );
 		final RandomAccessibleInterval translated = Views.translate( this.output, Intervals.minAsLongArray( interval ) );
 		segmenter.segment( inputImage.imageForSegmentation(), translated );
+	}
+
+	static private String storeToFile(String storedClassifier) {
+		try {
+			File model = File.createTempFile("labkit-", ".classifier");
+			com.google.common.io.Files.write(storedClassifier, model, Charset.defaultCharset());
+			return model.toString();
+		}
+		catch (IOException exc) {
+			throw new RuntimeException(exc);
+		}
+		
+
 	}
 }

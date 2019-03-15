@@ -11,6 +11,7 @@ import net.imglib2.labkit.models.DefaultSegmentationModel;
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
+import cz.it4i.parallel.HPCBigDataServerRunTS;
 import cz.it4i.parallel.HPCImageJServerRunner;
 import cz.it4i.parallel.TestParadigm;
 import cz.it4i.parallel.ui.HPCImageJServerRunnerWithUI;
@@ -33,6 +34,8 @@ public class StartLabkitOnHPC
 		final HPCImageJServerRunner runner = HPCImageJServerRunnerWithUI.gui(
 			context);
 		final ParallelizationParadigm paradigm = new TestParadigm(runner, context);
+		HPCBigDataServerRunTS runBGS = new HPCBigDataServerRunTS(runner, "~/bigdataserver/bigdataserver.sh", "/scratch/work/project/open-15-12/apps/bigdataserver/HisYFP-SPIM.xml");
+		runBGS.run();
 		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
 		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel( inputImage, context,
 				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, paradigm ) );

@@ -23,7 +23,10 @@ import cz.it4i.parallel.ui.HPCImageJServerRunnerWithUI;
 public class StartLabkitOnHPC
 {
 	public static void main(String... args) {
-		final String filename = fileExists("/please/specify/path/to/big-data-viewer/dataset.xml");
+		final String bdsLocationOnCluster =
+			"/scratch/work/project/open-15-12/apps/bigdataserver/bigdataserver.sh";
+
+		final String filenameOnCluster = "/scratch/work/project/open-15-12/apps/bigdataserver/export.xml";
 		// To get a big data viewer dataset:
 		// 1. Open and 3d gray scale image in FIJI. For example: File > Open Samples > T1 Head.
 		// 2. Run: Plugins > BigDataViewer > Export Current Image as XML/HDF5.
@@ -34,16 +37,19 @@ public class StartLabkitOnHPC
 		final HPCImageJServerRunner runner = HPCImageJServerRunnerWithUI.gui(
 			context);
 		final ParallelizationParadigm paradigm = new TestParadigm(runner, context);
-		HPCBigDataServerRunTS runBGS = new HPCBigDataServerRunTS(runner, "~/bigdataserver/bigdataserver.sh", "/scratch/work/project/open-15-12/apps/bigdataserver/HisYFP-SPIM.xml");
-		runBGS.run();
-		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
-		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel( inputImage, context,
-				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, paradigm ) );
+		final HPCBigDataServerRunTS runBGS = new HPCBigDataServerRunTS(runner,
+			bdsLocationOnCluster, filenameOnCluster);
+		final String remoteURL = runBGS.run();
+		final InputImage inputImage = new SpimDataInputImage( remoteURL, 0 );
+		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel(
+			inputImage, context, (c, i) -> new SciJavaParallelSegmenter(c, i,
+				filenameOnCluster, paradigm));
 		LabkitFrame.show(segmentationModel, "Demonstrate SciJava-Parallel used for Segmentation");
 
 		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
 	}
 
+	@SuppressWarnings("unused")
 	private static String fileExists( String path )
 	{
 		if (!new File(path).exists()) {

@@ -34,7 +34,7 @@ public class StartLabkitOnHPC
 		final ImageJ ij = new ImageJ();
 		ij.ui().showUI();
 		final Context context = ij.context();
-		final HPCImageJServerRunner runner = HPCImageJServerRunnerWithUI.gui(
+		final HPCImageJServerRunnerWithUI runner = HPCImageJServerRunnerWithUI.gui(
 			context);
 		final ParallelizationParadigm paradigm = new TestParadigm(runner, context);
 		final HPCBigDataServerRunTS runBGS = new HPCBigDataServerRunTS(runner,
@@ -45,8 +45,9 @@ public class StartLabkitOnHPC
 			inputImage, context, (c, i) -> new SciJavaParallelSegmenter(c, i,
 				filenameOnCluster, paradigm));
 		LabkitFrame.show(segmentationModel, "Demonstrate SciJava-Parallel used for Segmentation");
-
-		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
+		if (runner.isShutdownJob()) {
+			Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
+		}
 	}
 
 	@SuppressWarnings("unused")

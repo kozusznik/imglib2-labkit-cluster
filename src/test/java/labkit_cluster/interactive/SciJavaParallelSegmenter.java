@@ -65,16 +65,22 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 	@Override
 	public void segment( RandomAccessibleInterval< ? > image, RandomAccessibleInterval< ? extends IntegerType< ? > > labels )
 	{
-		CheckedExceptionUtils.run( () -> segment( paradigm, filename, model.getAbsolutePath(), labels ) );
+		segment( paradigm, filename, model.getAbsolutePath(), labels );
 	}
 
-	private void segment( ParallelizationParadigm paradigm, String inputXml, String classifier, RandomAccessibleInterval<? extends IntegerType<?>> output ) throws IOException {
+
+	private void segment( ParallelizationParadigm paradigm, String inputXml, String classifier, RandomAccessibleInterval<? extends IntegerType<?>> output ) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("input", inputXml );
-		map.put("classifier", new String( Files.readAllBytes( Paths.get( classifier ) ) ) );
+		map.put("classifier", readTextFile( classifier ) );
 		map.put("interval", JsonIntervals.toJson( output ));
 		map.put( "output", wrapAsDataset( output ) );
 		paradigm.runAll( SegmentCommand.class, Collections.singletonList( map ) );
+	}
+
+	private static String readTextFile( String classifier )
+	{
+		return CheckedExceptionUtils.run( () -> new String( Files.readAllBytes( Paths.get( classifier ) ) ) );
 	}
 
 	private Dataset wrapAsDataset( RandomAccessibleInterval< ? extends RealType<?> > output )

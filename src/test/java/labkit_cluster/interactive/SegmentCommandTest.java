@@ -11,6 +11,7 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.ImgView;
 import net.imglib2.img.array.ArrayImgs;
+import net.imglib2.labkit.utils.CheckedExceptionUtils;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -19,6 +20,8 @@ import org.scijava.parallel.ParallelizationParadigm;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,10 +70,17 @@ public class SegmentCommandTest
 	{
 		Map<String, Object> map = new HashMap<>();
 		map.put("input", inputXml );
-		map.put("classifier", classifier );
+		map.put("classifier", readTextFile( classifier ) );
 		map.put("interval", JsonIntervals.toJson( output ));
 		map.put( "output", wrapAsDataset( output ) );
 		paradigm.runAll( SegmentCommand.class, Collections.singletonList( map ) );
+	}
+
+	private String readTextFile( String filename )
+	{
+		return CheckedExceptionUtils.run( () ->
+				new String( Files.readAllBytes( Paths.get( filename ) ) )
+		);
 	}
 
 	private Dataset wrapAsDataset( RandomAccessibleInterval< UnsignedByteType > output )

@@ -22,7 +22,7 @@ import cz.it4i.parallel.ui.HPCImageJServerRunnerWithUI;
 public class StartLabkitOnHPC
 {
 	public static void main(String... args) {
-		final String filename = fileExists("/please/specify/path/to/big-data-viewer/dataset.xml");
+		final String filename = fileExists("/home/arzt/Documents/Datasets/Mouse Brain/hdf5/export.xml");
 		// To get a big data viewer dataset:
 		// 1. Open and 3d gray scale image in FIJI. For example: File > Open Samples > T1 Head.
 		// 2. Run: Plugins > BigDataViewer > Export Current Image as XML/HDF5.

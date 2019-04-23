@@ -52,6 +52,7 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 			try
 			{
 				File model = File.createTempFile( "labkit-", ".classifier" );
+				model.deleteOnExit();
 				saveModel( model.getAbsolutePath() );
 				this.model = model;
 			}
@@ -60,6 +61,13 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 				throw new RuntimeException( e );
 			}
 		}
+	}
+
+	@Override
+	public void openModel( String path )
+	{
+		this.model = new File( path );
+		super.openModel( path );
 	}
 
 	@Override

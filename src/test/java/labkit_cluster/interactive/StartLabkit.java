@@ -1,9 +1,11 @@
 package labkit_cluster.interactive;
 
 import cz.it4i.parallel.TestParadigm;
+import net.imglib2.labkit.InitialLabeling;
 import net.imglib2.labkit.LabkitFrame;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
+import net.imglib2.labkit.labeling.LabelingSerializer;
 import net.imglib2.labkit.models.DefaultSegmentationModel;
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
@@ -29,12 +31,17 @@ public class StartLabkit
 
 		final Context context = new Context();
 		final ParallelizationParadigm paradigm = TestParadigm.localImageJServer( fiji, context );
+//		final ParallelizationParadigm paradigm = new TestParadigm( new InProcessImageJServerRunner(context), context );
+		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
 		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
 		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel( inputImage, context,
 				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, paradigm ) );
 		LabkitFrame.show(segmentationModel, "Demonstrate SciJava-Parallel used for Segmentation");
 
-		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
+		// Open Classifier
+		final String classifier = fileExists("/home/arzt/Documents/Datasets/T1-Head-HDF5/example.classifier");
+		segmentationModel.selectedSegmenter().get().openModel( classifier );
+		segmentationModel.selectedSegmenter().notifier().notifyListeners();
 	}
 
 	private static String fileExists( String path )

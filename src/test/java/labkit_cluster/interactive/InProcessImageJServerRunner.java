@@ -26,6 +26,12 @@ public class InProcessImageJServerRunner extends AbstractImageJServerRunner
 	}
 
 	@Override
+	public int getNCores()
+	{
+		return Runtime.getRuntime().availableProcessors();
+	}
+
+	@Override
 	public void close()
 	{
 		service.dispose();

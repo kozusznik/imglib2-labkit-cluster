@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SegmentCommandTest
 {
@@ -68,12 +69,18 @@ public class SegmentCommandTest
 
 	public void segment( ParallelizationParadigm paradigm, RandomAccessibleInterval< UnsignedByteType > output )
 	{
+		Map< String, Object > map = prepareParameters( output );
+		paradigm.runAll( SegmentCommand.class, Collections.singletonList( map ) );
+	}
+
+	public Map< String, Object > prepareParameters( RandomAccessibleInterval< UnsignedByteType > output )
+	{
 		Map<String, Object> map = new HashMap<>();
 		map.put("input", inputXml );
 		map.put("classifier", readTextFile( classifier ) );
 		map.put("interval", JsonIntervals.toJson( output ));
 		map.put( "output", wrapAsDataset( output ) );
-		paradigm.runAll( SegmentCommand.class, Collections.singletonList( map ) );
+		return map;
 	}
 
 	private String readTextFile( String filename )
@@ -83,11 +90,13 @@ public class SegmentCommandTest
 		);
 	}
 
+	private static final AtomicInteger counter = new AtomicInteger();
+
 	private Dataset wrapAsDataset( RandomAccessibleInterval< UnsignedByteType > output )
 	{
 		final ImgPlus< UnsignedByteType > imgPlus = new ImgPlus<>( ImgView.wrap( Views.zeroMin( output ), null ) );
 		Dataset example = new DefaultDataset( context, imgPlus );
-		example.setName( "dummy.png" );
+		example.setName( "dummy" + counter + ".png" );
 		return example;
 	}
 

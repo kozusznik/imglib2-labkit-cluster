@@ -29,8 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SegmentCommandTest
 {
+	// Note: SegmentCommandTest and SegmentCommandTest2 only work because
+	// this file is on my laptop and on the ostrava cluster with the same
+	// name.
 	public final static String inputXml = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/export.xml";
-	public final static String classifier = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/classifier.classifier";
+
+	public final static String classifier = SegmentCommandTest.class.getResource( "/mouse_brain.classifier" ).getPath();
 
 	@Parameter
 	private Context context;
@@ -96,7 +100,7 @@ public class SegmentCommandTest
 	{
 		final ImgPlus< UnsignedByteType > imgPlus = new ImgPlus<>( ImgView.wrap( Views.zeroMin( output ), null ) );
 		Dataset example = new DefaultDataset( context, imgPlus );
-		example.setName( "dummy" + counter + ".png" );
+		example.setName( "dummy" + counter.incrementAndGet() + ".png" );
 		return example;
 	}
 

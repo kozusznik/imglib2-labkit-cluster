@@ -1,7 +1,6 @@
 package labkit_cluster.interactive;
 
 import cz.it4i.parallel.AbstractImageJServerRunner;
-import cz.it4i.parallel.ImageJServerRunner;
 import net.imagej.server.ImageJServerService;
 import org.scijava.Context;
 

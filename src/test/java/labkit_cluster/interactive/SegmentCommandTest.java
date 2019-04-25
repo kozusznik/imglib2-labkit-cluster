@@ -32,7 +32,7 @@ public class SegmentCommandTest
 	// Note: SegmentCommandTest and SegmentCommandTest2 only work because
 	// this file is on my laptop and on the ostrava cluster with the same
 	// name.
-	public final static String inputXml = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/export.xml";
+	public final static String inputXml = "/scratch/work/project/open-15-12/datasets/matthias-mouse-brain/export.xml";
 
 	public final static String classifier = SegmentCommandTest.class.getResource( "/mouse_brain.classifier" ).getPath();
 

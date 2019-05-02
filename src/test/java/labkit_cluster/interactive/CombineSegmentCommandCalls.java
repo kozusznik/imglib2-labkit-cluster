@@ -1,6 +1,6 @@
 package labkit_cluster.interactive;
 
-import org.scijava.parallel.ParallelizationParadigm;
+import com.esotericsoftware.minlog.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,20 +11,29 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import org.scijava.parallel.ParallelizationParadigm;
+
+import groovy.util.logging.Slf4j;
+
 /**
  * This class enqueue calls to the {@link SegmentCommand}, and executes
  * them with a combined runAll call.
  */
+@Slf4j
 class CombineSegmentCommandCalls
 {
 
-	private BlockingQueue< Task > queue = new ArrayBlockingQueue<>( 2 );
+	
+	private static final int NCORES = 24;
+
+	private BlockingQueue< Task > queue = new ArrayBlockingQueue<>( NCORES );
 
 	private final ParallelizationParadigm paradigm;
 
 	public CombineSegmentCommandCalls( ParallelizationParadigm paradigm ) {
 		this.paradigm = paradigm;
 		final Worker worker = new Worker();
+		worker.setPriority((Thread.MIN_PRIORITY + Thread.NORM_PRIORITY) / 2);
 		worker.setDaemon( true );
 		worker.start();
 	}
@@ -52,7 +61,7 @@ class CombineSegmentCommandCalls
 		@Override
 		public void run()
 		{
-			List< Task > batch = new ArrayList<>( 24 );
+			List< Task > batch = new ArrayList<>( NCORES );
 			while(true) {
 				batch.clear();
 				queue.drainTo( batch );
@@ -64,6 +73,7 @@ class CombineSegmentCommandCalls
 		{
 			try
 			{
+				Log.info("tasks.size: " + tasks.size());
 				List< Map< String, Object > > parameters = tasks.stream().map( Task::getParameters ).collect( Collectors.toList());
 				paradigm.runAll( SegmentCommand.class, parameters );
 			} catch ( Exception e )

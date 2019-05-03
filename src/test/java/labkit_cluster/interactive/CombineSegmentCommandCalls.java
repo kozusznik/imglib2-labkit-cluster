@@ -24,16 +24,16 @@ class CombineSegmentCommandCalls
 {
 
 	
-	private static final int NCORES = 24;
+	private static final int QUEUE_LENGHT = 24;
 
-	private BlockingQueue< Task > queue = new ArrayBlockingQueue<>( NCORES );
+	private BlockingQueue< Task > queue = new ArrayBlockingQueue<>( QUEUE_LENGHT );
 
 	private final ParallelizationParadigm paradigm;
 
 	public CombineSegmentCommandCalls( ParallelizationParadigm paradigm ) {
 		this.paradigm = paradigm;
 		final Worker worker = new Worker();
-		worker.setPriority((Thread.MIN_PRIORITY + Thread.NORM_PRIORITY) / 2);
+		worker.setPriority(Thread.MIN_PRIORITY);
 		worker.setDaemon( true );
 		worker.start();
 	}
@@ -61,7 +61,7 @@ class CombineSegmentCommandCalls
 		@Override
 		public void run()
 		{
-			List< Task > batch = new ArrayList<>( NCORES );
+			List< Task > batch = new ArrayList<>( QUEUE_LENGHT );
 			while(true) {
 				batch.clear();
 				queue.drainTo( batch );

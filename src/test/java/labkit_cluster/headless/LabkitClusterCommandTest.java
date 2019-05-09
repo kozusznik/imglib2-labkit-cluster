@@ -1,7 +1,6 @@
 
 package labkit_cluster.headless;
 
-import cz.it4i.parallel.TestParadigm;
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
 import net.imglib2.img.cell.CellGrid;
@@ -9,6 +8,8 @@ import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.util.Intervals;
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
+
+import cz.it4i.parallel.utils.TestParadigm;
 
 import java.util.AbstractList;
 import java.util.HashMap;

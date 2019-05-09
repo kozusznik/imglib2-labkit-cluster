@@ -12,8 +12,8 @@ import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
 import cz.it4i.parallel.HPCImageJServerRunner;
-import cz.it4i.parallel.TestParadigm;
 import cz.it4i.parallel.ui.HPCImageJServerRunnerWithUI;
+import cz.it4i.parallel.utils.TestParadigm;
 
 /**
  * Starts Labkit, with a special segmentation algorithm, that

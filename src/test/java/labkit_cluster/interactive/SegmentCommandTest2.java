@@ -2,7 +2,8 @@ package labkit_cluster.interactive;
 
 import bdv.util.BdvFunctions;
 import bdv.util.volatiles.VolatileViews;
-import cz.it4i.parallel.TestParadigm;
+import cz.it4i.parallel.utils.TestParadigm;
+
 import net.imglib2.cache.img.CellLoader;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;

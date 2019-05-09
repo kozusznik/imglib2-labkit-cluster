@@ -1,16 +1,16 @@
 package labkit_cluster.interactive;
 
-import cz.it4i.parallel.TestParadigm;
-import net.imglib2.labkit.InitialLabeling;
+import java.io.File;
+
 import net.imglib2.labkit.LabkitFrame;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
-import net.imglib2.labkit.labeling.LabelingSerializer;
 import net.imglib2.labkit.models.DefaultSegmentationModel;
+
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
-import java.io.File;
+import cz.it4i.parallel.utils.TestParadigm;
 
 /**
  * Starts Labkit, with a special segmentation algorithm, that

@@ -4,8 +4,9 @@ import bdv.util.BdvFunctions;
 import bdv.util.volatiles.SharedQueue;
 import bdv.util.volatiles.VolatileViews;
 import cz.it4i.parallel.HPCImageJServerRunner;
-import cz.it4i.parallel.TestParadigm;
 import cz.it4i.parallel.ui.HPCImageJServerRunnerWithUI;
+import cz.it4i.parallel.utils.TestParadigm;
+
 import net.imagej.ImageJ;
 import net.imglib2.cache.img.CellLoader;
 import net.imglib2.cache.img.DiskCachedCellImg;

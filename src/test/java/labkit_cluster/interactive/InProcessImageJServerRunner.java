@@ -1,20 +1,22 @@
 package labkit_cluster.interactive;
 
-import cz.it4i.parallel.AbstractImageJServerRunner;
-import net.imagej.server.ImageJServerService;
-import org.scijava.Context;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class InProcessImageJServerRunner extends AbstractImageJServerRunner
-{
+import net.imagej.server.ImageJServerService;
 
+import org.scijava.Context;
+
+import cz.it4i.parallel.AbstractImageJServerRunner;
+
+
+public class InProcessImageJServerRunner extends AbstractImageJServerRunner {
 	private final ImageJServerService service;
 
 	public InProcessImageJServerRunner(Context context)
 	{
+		super(true);
 		service = context.service( ImageJServerService.class );
 	}
 
@@ -31,8 +33,7 @@ public class InProcessImageJServerRunner extends AbstractImageJServerRunner
 	}
 
 	@Override
-	public void close()
-	{
+	public void shutdown() {
 		service.dispose();
 	}
 
@@ -41,4 +42,5 @@ public class InProcessImageJServerRunner extends AbstractImageJServerRunner
 	{
 		service.start();
 	}
+
 }

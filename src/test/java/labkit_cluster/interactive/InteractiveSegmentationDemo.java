@@ -37,11 +37,6 @@ public class InteractiveSegmentationDemo
 		return new TestParadigm( runner, context );
 	}
 
-	private static TestParadigm initTestParadigm( Context context )
-	{
-		return new TestParadigm( new InProcessImageJServerRunner( context ), context );
-	}
-
 	SegmentCommandTest segmentCommandTest;
 
 	InteractiveSegmentationDemo( Context context )

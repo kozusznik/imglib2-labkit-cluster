@@ -34,7 +34,7 @@ public class StartLabkit
 //		final ParallelizationParadigm paradigm = new TestParadigm( new InProcessImageJServerRunner(context), context );
 		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
 		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
-		final CombineSegmentCommandCalls calls = new CombineSegmentCommandCalls(
+		final CombineSegmentCommandCalls calls = new CombineSegmentCommandCalls(context,
 			paradigm, Runtime.getRuntime().availableProcessors());
 		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel( inputImage, context,
 				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, calls ) );

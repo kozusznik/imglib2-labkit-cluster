@@ -8,6 +8,7 @@ import net.imglib2.labkit.LabkitFrame;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.labkit.models.DefaultSegmentationModel;
+import net.imglib2.labkit.segmentation.PredictionLayer;
 
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
@@ -31,7 +32,9 @@ public class StartLabkitOnHPC
 		final Context context = ij.context();
 		final ParallelizationParadigm paradigm = InteractiveSegmentationDemo.initHpcParadigm(context);
 		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
-		final CombineSegmentCommandCalls calls = new CombineSegmentCommandCalls(paradigm, getSumOfCores(paradigm));
+		int nCores = getSumOfCores(paradigm);
+		final CombineSegmentCommandCalls calls = new CombineSegmentCommandCalls(context, paradigm, nCores);
+		System.setProperty(PredictionLayer.SIZE_OF_QUEUE, nCores + "");
 		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel( inputImage, context,
 				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, calls ) );
 		LabkitFrame.show(segmentationModel, "Demonstrate SciJava-Parallel used for Segmentation");

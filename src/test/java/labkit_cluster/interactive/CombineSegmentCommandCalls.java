@@ -1,6 +1,7 @@
 package labkit_cluster.interactive;
 
 import com.esotericsoftware.minlog.Log;
+import com.google.common.collect.Streams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import net.imagej.Dataset;
+import net.imagej.DefaultDataset;
+import net.imagej.ImgPlus;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImgView;
+import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
+
+import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
 import groovy.util.logging.Slf4j;
@@ -32,7 +42,10 @@ class CombineSegmentCommandCalls
 
 	private int queueLength;
 
-	public CombineSegmentCommandCalls( ParallelizationParadigm paradigm, int queueLength ) {
+	private Context context;
+
+	public CombineSegmentCommandCalls( Context context,ParallelizationParadigm paradigm, int queueLength ) {
+		this.context = context;
 		this.paradigm = paradigm;
 		this.queueLength = queueLength;
 		this.queue = new ArrayBlockingQueue<>( queueLength );
@@ -104,7 +117,17 @@ class CombineSegmentCommandCalls
 				if (!tasks.isEmpty()) {
 					Log.info("tasks.size: " + tasks.size());
 					List< Map< String, Object > > parameters = tasks.stream().map( Task::getParameters ).collect( Collectors.toList());
-					paradigm.runAll( SegmentCommand.class, parameters );
+					Streams.zip(paradigm.runAllAsync(SegmentCommand.class, parameters)
+						.stream(), parameters.stream(), (future, input) -> future
+							.thenAccept(output -> saveParams(input, output))).parallel().forEach(f -> {
+								try {
+									f.get();
+								}
+								catch (InterruptedException | ExecutionException exc) {
+									// TODO Auto-generated catch block
+									exc.printStackTrace();
+								}
+							});
 				}
 			} catch ( Exception e )
 			{
@@ -113,6 +136,25 @@ class CombineSegmentCommandCalls
 			}
 			for( Task task : tasks )
 				task.complete( null );
+		}
+
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		private void saveParams(Map<String, Object> in,
+			Map<String, Object> out)
+		{
+			RandomAccessibleInterval rai1 = (RandomAccessibleInterval) in.get("output");
+			RandomAccessibleInterval rai2 = (RandomAccessibleInterval) out.get("output");
+			Dataset ds1 = wrapAsDataset(rai1);
+			Dataset ds2 = wrapAsDataset(rai2);
+			ds2.copyInto(ds1);
+			
+		}
+		private Dataset wrapAsDataset( RandomAccessibleInterval< ? extends RealType<?> > output )
+		{
+			final ImgPlus imgPlus = new ImgPlus( ImgView.wrap( Views.zeroMin( (RandomAccessibleInterval) output ), null ) );
+			Dataset example = new DefaultDataset( context, imgPlus );
+			example.setName( "dummy.png" );
+			return example;
 		}
 	}
 

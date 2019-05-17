@@ -45,9 +45,11 @@ public class InteractiveSegmentationDemo
 	}
 
 	SegmentCommandTest segmentCommandTest;
+	private Context context;
 
 	InteractiveSegmentationDemo( Context context )
 	{
+		this.context = context;
 		segmentCommandTest = new SegmentCommandTest( context );
 	}
 
@@ -55,7 +57,7 @@ public class InteractiveSegmentationDemo
 	{
 		SpimDataInputImage input = new SpimDataInputImage( SegmentCommandTest.inputXml, 0 );
 		long[] dim = Intervals.dimensionsAsLongArray( input.imageForSegmentation() );
-		CombineSegmentCommandCalls s = new CombineSegmentCommandCalls( paradigm, 12 );
+		CombineSegmentCommandCalls s = new CombineSegmentCommandCalls(context ,paradigm, 12 );
 		final CellLoader< UnsignedByteType > loader = cell -> {
 			System.out.println( System.identityHashCode( Thread.currentThread() ) );
 			s.run( segmentCommandTest.prepareParameters( cell ) );

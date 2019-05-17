@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class MyN5Test {
 
-	@Test
+	//@Test
 	public void testHdf5() {
 		final String path = "/home/arzt/tmp/output/result";
 		long[] dims = { 1000, 1000, 1000 };

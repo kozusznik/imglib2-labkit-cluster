@@ -30,8 +30,9 @@ public class SegmentCommand implements Command
 	@Parameter
 	private String interval;
 
+	@SuppressWarnings("rawtypes")
 	@Parameter(type = ItemIO.BOTH)
-	private Dataset output;
+	private RandomAccessibleInterval output;
 
 	@Parameter
 	private Context context;

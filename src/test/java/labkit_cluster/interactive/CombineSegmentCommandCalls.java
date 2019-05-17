@@ -24,14 +24,18 @@ class CombineSegmentCommandCalls
 {
 
 	
-	private static final int QUEUE_LENGHT = 24;
+	private static final long TIMEOUT = 20;
 
-	private BlockingQueue< Task > queue = new ArrayBlockingQueue<>( QUEUE_LENGHT );
+	private BlockingQueue< Task > queue;
 
 	private final ParallelizationParadigm paradigm;
 
-	public CombineSegmentCommandCalls( ParallelizationParadigm paradigm ) {
+	private int queueLength;
+
+	public CombineSegmentCommandCalls( ParallelizationParadigm paradigm, int queueLength ) {
 		this.paradigm = paradigm;
+		this.queueLength = queueLength;
+		this.queue = new ArrayBlockingQueue<>( queueLength );
 		final Worker worker = new Worker();
 		worker.setPriority(Thread.MIN_PRIORITY);
 		worker.setDaemon( true );
@@ -48,6 +52,9 @@ class CombineSegmentCommandCalls
 		{
 			final Task task = new Task( parameters );
 			queue.put( task );
+			synchronized (queue) {
+				queue.notify();
+			}
 			task.get();
 		}
 		catch ( InterruptedException | ExecutionException e )
@@ -59,13 +66,34 @@ class CombineSegmentCommandCalls
 	private class Worker extends Thread {
 
 		@Override
-		public void run()
+		public  void run()
 		{
-			List< Task > batch = new ArrayList<>( QUEUE_LENGHT );
+			List< Task > batch = new ArrayList<>( queueLength );
+			long timestamp;
 			while(true) {
-				batch.clear();
+				timestamp = System.currentTimeMillis();
+				synchronized(queue) {
+					while (queue.size()< queueLength) {
+						if (System.currentTimeMillis() - timestamp < TIMEOUT) {
+							try {
+								long waitTime = Math.max(TIMEOUT - System.currentTimeMillis() + timestamp, 0);
+								if (waitTime > 0) {
+									queue.wait(waitTime);
+								}
+							}
+							catch (InterruptedException exc) {
+								return;
+							}
+						} else if (!queue.isEmpty()){
+							break;
+						}
+					}
+				}
+				
 				queue.drainTo( batch );
 				processTasks( batch );
+				batch.clear();
+				
 			}
 		}
 
@@ -73,9 +101,11 @@ class CombineSegmentCommandCalls
 		{
 			try
 			{
-				Log.info("tasks.size: " + tasks.size());
-				List< Map< String, Object > > parameters = tasks.stream().map( Task::getParameters ).collect( Collectors.toList());
-				paradigm.runAll( SegmentCommand.class, parameters );
+				if (!tasks.isEmpty()) {
+					Log.info("tasks.size: " + tasks.size());
+					List< Map< String, Object > > parameters = tasks.stream().map( Task::getParameters ).collect( Collectors.toList());
+					paradigm.runAll( SegmentCommand.class, parameters );
+				}
 			} catch ( Exception e )
 			{
 				for( Task task : tasks )

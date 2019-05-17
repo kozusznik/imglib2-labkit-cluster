@@ -1,12 +1,5 @@
 package labkit_cluster.interactive;
 
-import bdv.util.BdvFunctions;
-import bdv.util.volatiles.SharedQueue;
-import bdv.util.volatiles.VolatileViews;
-import cz.it4i.parallel.HPCImageJServerRunner;
-import cz.it4i.parallel.ui.HPCImageJServerRunnerWithUI;
-import cz.it4i.parallel.utils.TestParadigm;
-
 import net.imagej.ImageJ;
 import net.imglib2.cache.img.CellLoader;
 import net.imglib2.cache.img.DiskCachedCellImg;
@@ -15,8 +8,18 @@ import net.imglib2.cache.img.DiskCachedCellImgOptions;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Intervals;
+
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
+
+import bdv.util.BdvFunctions;
+import bdv.util.volatiles.SharedQueue;
+import bdv.util.volatiles.VolatileViews;
+import cz.it4i.parallel.HPCImageJServerRunner;
+import cz.it4i.parallel.HPCSettings;
+import cz.it4i.parallel.fst.runners.HPCFSTRPCServerRunnerUI;
+import cz.it4i.parallel.fst.utils.TestFSTRPCParadigm;
+import cz.it4i.parallel.ui.HPCSettingsGui;
 
 public class InteractiveSegmentationDemo
 {
@@ -30,11 +33,15 @@ public class InteractiveSegmentationDemo
 		new InteractiveSegmentationDemo( context ).run( paradigm );
 	}
 
-	private static ParallelizationParadigm initHpcParadigm( Context context )
+	static ParallelizationParadigm initHpcParadigm( Context context )
 	{
-		final HPCImageJServerRunner runner = HPCImageJServerRunnerWithUI.gui(
-				context );
-		return new TestParadigm( runner, context );
+		
+		
+		final HPCSettings settings = HPCSettingsGui.showDialog(context);
+
+		final HPCImageJServerRunner runner = new HPCFSTRPCServerRunnerUI(settings,
+			settings.isShutdownJobAfterClose());
+		return TestFSTRPCParadigm.runner(runner, context);
 	}
 
 	SegmentCommandTest segmentCommandTest;
@@ -48,7 +55,7 @@ public class InteractiveSegmentationDemo
 	{
 		SpimDataInputImage input = new SpimDataInputImage( SegmentCommandTest.inputXml, 0 );
 		long[] dim = Intervals.dimensionsAsLongArray( input.imageForSegmentation() );
-		CombineSegmentCommandCalls s = new CombineSegmentCommandCalls( paradigm );
+		CombineSegmentCommandCalls s = new CombineSegmentCommandCalls( paradigm, 12 );
 		final CellLoader< UnsignedByteType > loader = cell -> {
 			System.out.println( System.identityHashCode( Thread.currentThread() ) );
 			s.run( segmentCommandTest.prepareParameters( cell ) );

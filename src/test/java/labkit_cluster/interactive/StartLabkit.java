@@ -34,8 +34,10 @@ public class StartLabkit
 //		final ParallelizationParadigm paradigm = new TestParadigm( new InProcessImageJServerRunner(context), context );
 		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
 		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
+		final CombineSegmentCommandCalls calls = new CombineSegmentCommandCalls(
+			paradigm, Runtime.getRuntime().availableProcessors());
 		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel( inputImage, context,
-				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, paradigm ) );
+				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, calls ) );
 		LabkitFrame.show(segmentationModel, "Demonstrate SciJava-Parallel used for Segmentation");
 
 		// Open Classifier
@@ -48,7 +50,6 @@ public class StartLabkit
 	{
 		if(!new File( path ).exists())
 			throw new RuntimeException( "File doesn't exist: " + path );
-		else
-			return path;
+		return path;
 	}
 }

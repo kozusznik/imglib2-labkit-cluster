@@ -1,8 +1,6 @@
 package labkit_cluster.interactive;
 
-import bdv.util.BdvFunctions;
-import bdv.util.volatiles.VolatileViews;
-import cz.it4i.parallel.utils.TestParadigm;
+import static labkit_cluster.interactive.SegmentCommandTest.inputXml;
 
 import net.imglib2.cache.img.CellLoader;
 import net.imglib2.cache.img.DiskCachedCellImg;
@@ -11,16 +9,20 @@ import net.imglib2.cache.img.DiskCachedCellImgOptions;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Intervals;
+
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
-import static labkit_cluster.interactive.SegmentCommandTest.inputXml;
+import bdv.util.BdvFunctions;
+import bdv.util.volatiles.VolatileViews;
+import cz.it4i.parallel.fst.runners.InProcessFSTRPCServerRunner;
+import cz.it4i.parallel.utils.TestParadigm;
 
 public class SegmentCommandTest2
 {
 	public static void main(String... args) {
 		Context context = new Context();
-		ParallelizationParadigm paradigm = new TestParadigm( new InProcessImageJServerRunner( context ), context );
+		ParallelizationParadigm paradigm = new TestParadigm( new InProcessFSTRPCServerRunner( context ), context );
 		new SegmentCommandTest2(context).run(paradigm);
 		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
 	}

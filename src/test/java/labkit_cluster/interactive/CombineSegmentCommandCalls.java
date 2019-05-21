@@ -124,7 +124,7 @@ class CombineSegmentCommandCalls {
 							.thenAccept(output -> saveParams(input, output)));
 					Streams.zip(savingStream, tasks.stream(), (f, t) -> f.thenAccept(
 						x -> t.complete(null))).collect(Collectors.toList()).forEach(
-							f -> CheckedExceptionUtils.run(() -> f.get()));;
+							f -> CheckedExceptionUtils.run(() -> f.get()));
 
 					Log.info("tasks processed");
 				}

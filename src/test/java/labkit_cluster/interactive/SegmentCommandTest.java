@@ -1,9 +1,16 @@
 
 package labkit_cluster.interactive;
 
-import cz.it4i.parallel.TestParadigm;
+
 import io.scif.services.DatasetIOService;
-import labkit_cluster.headless.JsonIntervals;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import net.imagej.Dataset;
 import net.imagej.DefaultDataset;
 import net.imagej.ImgPlus;
@@ -15,17 +22,15 @@ import net.imglib2.labkit.utils.CheckedExceptionUtils;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import cz.it4i.parallel.fst.runners.InProcessFSTRPCServerRunner;
+import cz.it4i.parallel.utils.TestParadigm;
+import labkit_cluster.headless.JsonIntervals;
 
 public class SegmentCommandTest
 {
@@ -57,7 +62,7 @@ public class SegmentCommandTest
 
 	public void run()
 	{
-		try (ParallelizationParadigm paradigm = new TestParadigm( new InProcessImageJServerRunner( context ), context ))
+		try (ParallelizationParadigm paradigm = new TestParadigm( new InProcessFSTRPCServerRunner( context ), context ))
 		{
 			run( paradigm );
 		}

@@ -13,7 +13,9 @@ import net.imglib2.labkit.segmentation.PredictionLayer;
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
+import cz.it4i.parallel.ImageJServerRunner;
 import cz.it4i.parallel.RunningRemoteServer;
+import cz.it4i.parallel.fst.utils.RemoteTestParadigm;
 
 /**
  * Starts Labkit, with a special segmentation algorithm, that
@@ -30,7 +32,8 @@ public class StartLabkitOnHPC
 		final ImageJ ij = new ImageJ();
 		ij.ui().showUI();
 		final Context context = ij.context();
-		final ParallelizationParadigm paradigm = InteractiveSegmentationDemo.initHpcParadigm(context);
+		final ParallelizationParadigm paradigm = //new RemoteTestParadigm(new ImageJServerRunner("/home/koz01/Work/vyzkumnik/fiji/apps/Fiji.app-devel/fiji-linux64", false), context); 
+				InteractiveSegmentationDemo.initHpcParadigm(context);
 		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
 		int nCores = getSumOfCores(paradigm);
 		final CombineSegmentCommandCalls calls = new CombineSegmentCommandCalls(context, paradigm, nCores);

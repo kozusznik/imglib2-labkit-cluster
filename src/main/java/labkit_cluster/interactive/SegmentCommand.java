@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import net.imagej.Dataset;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
@@ -33,7 +34,7 @@ public class SegmentCommand implements Command
 
 	@SuppressWarnings("rawtypes")
 	@Parameter(type = ItemIO.BOTH)
-	private RandomAccessibleInterval output;
+	private Dataset output;
 
 	@Parameter
 	private Context context;

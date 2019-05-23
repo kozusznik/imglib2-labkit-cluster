@@ -17,8 +17,7 @@ import bdv.util.volatiles.SharedQueue;
 import bdv.util.volatiles.VolatileViews;
 import cz.it4i.parallel.HPCImageJServerRunner;
 import cz.it4i.parallel.HPCSettings;
-import cz.it4i.parallel.fst.runners.HPCFSTRPCServerRunnerUI;
-import cz.it4i.parallel.fst.utils.TestFSTRPCParadigm;
+import cz.it4i.parallel.fst.utils.RemoteTestParadigm;
 import cz.it4i.parallel.ui.HPCSettingsGui;
 
 public class InteractiveSegmentationDemo
@@ -39,9 +38,9 @@ public class InteractiveSegmentationDemo
 		
 		final HPCSettings settings = HPCSettingsGui.showDialog(context);
 
-		final HPCImageJServerRunner runner = new HPCFSTRPCServerRunnerUI(settings,
+		final HPCImageJServerRunner runner = new HPCImageJServerRunner(settings,
 			settings.isShutdownJobAfterClose());
-		return TestFSTRPCParadigm.runner(runner, context);
+		return new RemoteTestParadigm(runner, context);
 	}
 
 	SegmentCommandTest segmentCommandTest;

@@ -1,6 +1,8 @@
 
 package labkit_cluster.interactive;
 
+import static labkit_cluster.interactive.SciJavaParallelSegmenter.wrapAsDataset;
+
 import com.esotericsoftware.minlog.Log;
 import com.google.common.collect.Streams;
 
@@ -15,13 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.imagej.Dataset;
-import net.imagej.DefaultDataset;
-import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.ImgView;
 import net.imglib2.labkit.utils.CheckedExceptionUtils;
-import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
 
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
@@ -140,26 +137,20 @@ class CombineSegmentCommandCalls {
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		private Void saveParams(Map<String, Object> in, Map<String, Object> out) {
-			RandomAccessibleInterval rai1 = (RandomAccessibleInterval) in.get(
-				"output");
-			RandomAccessibleInterval rai2 = (RandomAccessibleInterval) out.get(
-				"output");
-
-			Dataset ds1 = wrapAsDataset(rai1);
-			Dataset ds2 = wrapAsDataset(rai2);
-			ds2.copyInto(ds1);
+			if (in.get("output") instanceof RandomAccessibleInterval) {
+					RandomAccessibleInterval rai1 = (RandomAccessibleInterval) in.get(
+					"output");
+				RandomAccessibleInterval rai2 = (RandomAccessibleInterval) out.get(
+					"output");
+	
+				Dataset ds1 = wrapAsDataset(context,rai1);
+				Dataset ds2 = wrapAsDataset(context,rai2);
+				ds2.copyInto(ds1);
+			}
 			return null;
 		}
 
-		private Dataset wrapAsDataset(
-			RandomAccessibleInterval<? extends RealType<?>> output)
-		{
-			final ImgPlus imgPlus = new ImgPlus(ImgView.wrap(Views.zeroMin(
-				(RandomAccessibleInterval) output), null));
-			Dataset example = new DefaultDataset(context, imgPlus);
-			example.setName("dummy.png");
-			return example;
-		}
+		
 	}
 
 	private static class Task extends CompletableFuture<Void> {

@@ -42,7 +42,15 @@ public class SegmentCommand implements Command
 	@Override
 	public void run()
 	{
-		SpimDataInputImage inputImage = new SpimDataInputImage( input, 0 );
+		SpimDataInputImage inputImage = null;
+		if (System.getProperty("SegmentCommand.no_first_run") == null) {
+			 synchronized(SegmentCommand.class) {
+				 inputImage = new SpimDataInputImage( input, 0 );
+				 System.setProperty("SegmentCommand.no_first_run","true"); 
+			 }
+		} else {
+			 inputImage = new SpimDataInputImage( input, 0 );
+		}
 		TrainableSegmentationSegmenter segmenter = new TrainableSegmentationSegmenter(context, inputImage);
 		segmenter.openModel( storeToFile( classifier ) );
 		Interval interval = JsonIntervals.fromJson( this.interval );

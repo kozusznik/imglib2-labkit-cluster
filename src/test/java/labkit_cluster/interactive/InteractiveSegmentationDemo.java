@@ -15,10 +15,10 @@ import org.scijava.parallel.ParallelizationParadigm;
 import bdv.util.BdvFunctions;
 import bdv.util.volatiles.SharedQueue;
 import bdv.util.volatiles.VolatileViews;
-import cz.it4i.parallel.HPCImageJServerRunner;
 import cz.it4i.parallel.HPCSettings;
 import cz.it4i.parallel.fst.runners.HPCFSTRPCServerRunnerUI;
 import cz.it4i.parallel.fst.utils.TestFSTRPCParadigm;
+import cz.it4i.parallel.runners.HPCImageJServerRunner;
 import cz.it4i.parallel.ui.HPCSettingsGui;
 
 public class InteractiveSegmentationDemo

@@ -1,5 +1,5 @@
 
-package labkit_cluster.headless;
+package labkit_cluster.command;
 
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
@@ -26,7 +26,7 @@ public class LabkitClusterCommand implements Command {
 	private String input;
 
 	@Parameter
-	private String interval;
+	private Interval interval;
 
 	@Parameter
 	// TODO rename because it's not an output an therefore confusiong
@@ -40,7 +40,6 @@ public class LabkitClusterCommand implements Command {
 	@Override
 	public void run() {
 		System.out.println(interval);
-		Interval interval = JsonIntervals.fromJson(this.interval);
 		SpimDataInputImage data = new SpimDataInputImage(input, 0);
 		RandomAccessibleInterval<? extends NumericType<?>> image = data
 			.imageForSegmentation();

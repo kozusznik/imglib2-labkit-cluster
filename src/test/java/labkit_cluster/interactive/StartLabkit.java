@@ -11,6 +11,8 @@ import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
 import cz.it4i.parallel.utils.TestParadigm;
+import labkit_cluster.headless.SciJavaParallelSegmenter;
+import labkit_cluster.utils.CombineSegmentCommandCalls;
 
 /**
  * Starts Labkit, with a special segmentation algorithm, that

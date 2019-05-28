@@ -1,4 +1,4 @@
-package labkit_cluster.interactive;
+package labkit_cluster.headless;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import net.imglib2.util.Pair;
 
 import org.scijava.Context;
 
-import labkit_cluster.headless.JsonIntervals;
+import labkit_cluster.utils.CombineSegmentCommandCalls;
 
 public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 {

@@ -1,5 +1,5 @@
 
-package labkit_cluster.interactive;
+package labkit_cluster.utils;
 
 import com.esotericsoftware.minlog.Log;
 import com.google.common.collect.Streams;
@@ -26,14 +26,13 @@ import net.imglib2.view.Views;
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
-import groovy.util.logging.Slf4j;
+import labkit_cluster.interactive.SegmentCommand;
 
 /**
  * This class enqueue calls to the {@link SegmentCommand}, and executes them
  * with a combined runAll call.
  */
-@Slf4j
-class CombineSegmentCommandCalls {
+public class CombineSegmentCommandCalls {
 
 	private static final long TIMEOUT = 20;
 

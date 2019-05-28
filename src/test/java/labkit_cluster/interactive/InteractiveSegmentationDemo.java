@@ -20,6 +20,7 @@ import cz.it4i.parallel.fst.runners.HPCFSTRPCServerRunnerUI;
 import cz.it4i.parallel.fst.utils.TestFSTRPCParadigm;
 import cz.it4i.parallel.runners.HPCImageJServerRunner;
 import cz.it4i.parallel.ui.HPCSettingsGui;
+import labkit_cluster.utils.CombineSegmentCommandCalls;
 
 public class InteractiveSegmentationDemo
 {

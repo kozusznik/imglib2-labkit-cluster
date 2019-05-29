@@ -169,7 +169,7 @@ public class LabkitCommand
 			N5FSReader reader = new N5FSReader( path );
 			RandomAccessibleInterval< UnsignedByteType > result = N5Utils
 					.openWithDiskCache( reader, "segmentation", new UnsignedByteType() );
-			BdvFunctions.show( result, "N5" ).setDisplayRange( 0, 1 );
+			BdvFunctions.show( result, "N5" ).setDisplayRange( 0, 5 );
 		}
 		catch ( IOException e )
 		{

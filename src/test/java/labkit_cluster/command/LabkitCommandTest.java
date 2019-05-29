@@ -1,8 +1,8 @@
 package labkit_cluster.command;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,9 +15,11 @@ import static org.junit.Assert.assertTrue;
 public class LabkitCommandTest
 {
 
-	private static final String imageXml = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/export.xml";
+	private static final String imageXml = LabkitCommandTest.class.getResource( "/small-t1-head/input.xml" ).getPath();
 
-	private static final String classifier = "/home/arzt/Documents/Datasets/Mouse Brain/hdf5/classifier.classifier";
+	private static final String classifier = LabkitCommandTest.class.getResource( "/small-t1-head/small-t1-head.classifier" ).getPath();
+
+	private static final String n5 = LabkitCommandTest.class.getResource( "/small-t1-head/segmentation.n5" ).getPath();
 
 	@Test
 	public void testCreateDataset()
@@ -43,26 +45,30 @@ public class LabkitCommandTest
 		}
 	}
 
-	@Ignore
 	@Test
-	public void testSegmentRange()
+	public void testSegmentRange() throws IOException
 	{
 		Path output = createOutputN5();
-		int exitCode = LabkitCommand.mainWithoutExit( LabkitCommand.SEGMENT, imageXml, classifier, output.toString(), "50", "100" );
-		assertEquals( 0, exitCode );
+		int exitCode1 = LabkitCommand.mainWithoutExit( LabkitCommand.SEGMENT, imageXml, classifier, output.toString(), "0", "2" );
+		assertEquals( 0, exitCode1 );
+		int exitCode2 = LabkitCommand.mainWithoutExit( LabkitCommand.SEGMENT, imageXml, classifier, output.toString(), "1", "2" );
+		assertEquals( 0, exitCode2 );
+		assertTrue( output.resolve( LabkitCommand.N5_DATASET_NAME ).resolve( "0/0/0" ).toFile().exists() );
+		System.out.println( output );
 	}
 
 	@Test
 	public void testSaveHdf5() throws IOException
 	{
-		int exitCode = LabkitCommand.mainWithoutExit( LabkitCommand.CREATE_HDF5, "/home/arzt/tmp/output", "/home/arzt/tmp/seg.xml" );
+		File file = File.createTempFile( "test-data", ".xml" );
+		assertTrue( file.delete() );
+		int exitCode = LabkitCommand.mainWithoutExit( LabkitCommand.CREATE_HDF5, n5, file.getAbsolutePath() );
 		assertEquals( 0, exitCode );
+		assertTrue( file.exists() );
 	}
 
 	public static void main( String... args )
 	{
-		Path output = createOutputN5();
-		LabkitCommand.mainWithoutExit( "segment-range", imageXml, classifier, output.toString(), "50", "100" );
-		LabkitCommand.showN5( output.toString() );
+		LabkitCommand.mainWithoutExit( LabkitCommand.SHOW, n5 );
 	}
 }

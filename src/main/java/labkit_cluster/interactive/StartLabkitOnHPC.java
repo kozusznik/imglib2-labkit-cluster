@@ -17,11 +17,11 @@ import org.scijava.parallel.ParallelizationParadigm;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import cz.it4i.parallel.HPCSettings;
 import cz.it4i.parallel.RunningRemoteServer;
 import cz.it4i.parallel.fst.runners.HPCFSTRPCServerRunnerUI;
 import cz.it4i.parallel.fst.utils.TestFSTRPCParadigm;
 import cz.it4i.parallel.runners.HPCImageJServerRunner;
+import cz.it4i.parallel.runners.HPCSettings;
 import cz.it4i.parallel.ui.HPCSettingsGui;
 import labkit_cluster.headless.SciJavaParallelSegmenter;
 import labkit_cluster.utils.CombineSegmentCommandCalls;
@@ -61,8 +61,7 @@ public class StartLabkitOnHPC implements Command {
 		
 		final HPCSettings settings = HPCSettingsGui.showDialog(context);
 
-		final HPCImageJServerRunner runner = new HPCFSTRPCServerRunnerUI(settings,
-			settings.isShutdownJobAfterClose());
+		final HPCImageJServerRunner runner = new HPCFSTRPCServerRunnerUI(settings);
 		return TestFSTRPCParadigm.runner(runner, context);
 	}
 

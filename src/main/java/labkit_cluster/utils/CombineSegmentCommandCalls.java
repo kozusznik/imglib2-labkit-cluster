@@ -14,17 +14,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.imagej.Dataset;
-import net.imagej.DefaultDataset;
-import net.imagej.ImgPlus;
+import net.imagej.ops.OpService;
+import net.imagej.ops.copy.CopyNamespace;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.ImgView;
 import net.imglib2.labkit.utils.CheckedExceptionUtils;
-import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
 
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
+import org.scijava.plugin.Parameter;
 
 import labkit_cluster.interactive.SegmentCommand;
 
@@ -42,12 +39,15 @@ public class CombineSegmentCommandCalls {
 
 	private int queueLength;
 
-	private Context context;
-
+		@Parameter
+	private OpService ops;
+	
+	private CopyNamespace copyNamespace;
 	public CombineSegmentCommandCalls(Context context,
 		ParallelizationParadigm paradigm, int queueLength)
 	{
-		this.context = context;
+		context.inject(this);
+		copyNamespace = ops.namespace(CopyNamespace.class);
 		this.paradigm = paradigm;
 		this.queueLength = queueLength;
 		this.queue = new ArrayBlockingQueue<>(queueLength);
@@ -120,7 +120,7 @@ public class CombineSegmentCommandCalls {
 					
 					Stream<CompletableFuture<Void>> savingStream = Streams.zip(paradigm.runAllAsync(SegmentCommand.class, parameters)
 						.stream(), parameters.stream(), (future, input) -> future
-							.thenAccept(output -> saveParams(input, output)));
+							.thenAccept(output -> saveParams(output,input)));
 					Streams.zip(savingStream, tasks.stream(), (f, t) -> f.thenAccept(
 						x -> t.complete(null))).collect(Collectors.toList()).forEach(
 							f -> CheckedExceptionUtils.run(() -> f.get()));
@@ -138,27 +138,16 @@ public class CombineSegmentCommandCalls {
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private Void saveParams(Map<String, Object> in, Map<String, Object> out) {
-			RandomAccessibleInterval rai1 = (RandomAccessibleInterval) in.get(
+		private Void saveParams(Map<String, Object> from, Map<String, Object> to) {
+			RandomAccessibleInterval raiFrom = (RandomAccessibleInterval) from.get(
 				"output");
-			RandomAccessibleInterval rai2 = (RandomAccessibleInterval) out.get(
+			RandomAccessibleInterval raiTo = (RandomAccessibleInterval) to.get(
 				"output");
-
-			Dataset ds1 = wrapAsDataset(rai1);
-			Dataset ds2 = wrapAsDataset(rai2);
-			ds2.copyInto(ds1);
+			
+			copyNamespace.rai(raiTo, raiFrom);
 			return null;
 		}
-
-		private Dataset wrapAsDataset(
-			RandomAccessibleInterval<? extends RealType<?>> output)
-		{
-			final ImgPlus imgPlus = new ImgPlus(ImgView.wrap(Views.zeroMin(
-				(RandomAccessibleInterval) output), null));
-			Dataset example = new DefaultDataset(context, imgPlus);
-			example.setName("dummy.png");
-			return example;
-		}
+	
 	}
 
 	private static class Task extends CompletableFuture<Void> {

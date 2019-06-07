@@ -8,13 +8,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.imagej.Dataset;
+import net.imagej.DefaultDataset;
+import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImgView;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.labeling.Labeling;
 import net.imglib2.labkit.segmentation.weka.TrainableSegmentationSegmenter;
 import net.imglib2.labkit.utils.CheckedExceptionUtils;
 import net.imglib2.type.numeric.IntegerType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
+import net.imglib2.view.Views;
 
 import org.scijava.Context;
 
@@ -29,9 +35,12 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 
 	private File model;
 
+	private Context context;
+
 	public SciJavaParallelSegmenter( Context context, InputImage inputImage, String filename, CombineSegmentCommandCalls calls)
 	{
 		super( context, inputImage );
+		this.context = context;
 		this.filename = filename;
 		this.calls = calls;
 	}
@@ -74,8 +83,15 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 		map.put("input", inputXml );
 		map.put("classifier", readTextFile( classifier ) );
 		map.put("interval", JsonIntervals.toJson( output ));
-		map.put( "output", output );
+		map.put("output", wrapAsDataset(output));
 		calls.run( map );
+	}
+	private Dataset wrapAsDataset( RandomAccessibleInterval< ? extends RealType<?> > output )
+	{
+		final ImgPlus imgPlus = new ImgPlus( ImgView.wrap( Views.zeroMin( (RandomAccessibleInterval) output ), null ) );
+		Dataset example = new DefaultDataset( context, imgPlus );
+		example.setName( "dummy.png" );
+		return example;
 	}
 
 	private static String readTextFile( String classifier )

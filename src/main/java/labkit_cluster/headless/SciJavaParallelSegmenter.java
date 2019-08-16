@@ -52,10 +52,10 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 		if( super.isTrained() ) {
 			try
 			{
-				File model = File.createTempFile( "labkit-", ".classifier" );
-				model.deleteOnExit();
-				saveModel( model.getAbsolutePath() );
-				this.model = model;
+				File tempModel = File.createTempFile( "labkit-", ".classifier" );
+				tempModel.deleteOnExit();
+				saveModel( tempModel.getAbsolutePath() );
+				this.model = tempModel;
 			}
 			catch ( IOException e )
 			{
@@ -88,9 +88,11 @@ public class SciJavaParallelSegmenter extends TrainableSegmentationSegmenter
 	}
 	private Dataset wrapAsDataset( RandomAccessibleInterval< ? extends RealType<?> > output )
 	{
-		final ImgPlus imgPlus = new ImgPlus( ImgView.wrap( Views.zeroMin( (RandomAccessibleInterval) output ), null ) );
-		Dataset example = new DefaultDataset( context, imgPlus );
-		example.setName( "dummy.png" );
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		final ImgPlus<? extends RealType<?>> imgPlus = new ImgPlus(ImgView.wrap(
+			Views.zeroMin((RandomAccessibleInterval) output), null));
+		Dataset example = new DefaultDataset(context, imgPlus);
+		example.setName("dummy.png");
 		return example;
 	}
 

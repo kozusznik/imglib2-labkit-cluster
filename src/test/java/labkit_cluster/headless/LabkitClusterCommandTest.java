@@ -1,22 +1,22 @@
 
 package labkit_cluster.headless;
 
+import java.util.AbstractList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
 import net.imglib2.img.cell.CellGrid;
 import net.imglib2.labkit.inputimage.SpimDataInputImage;
 import net.imglib2.util.Intervals;
+
 import org.scijava.Context;
 import org.scijava.parallel.ParallelizationParadigm;
 
 import cz.it4i.parallel.utils.TestParadigm;
-
-import java.util.AbstractList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class LabkitClusterCommandTest {
 
@@ -25,14 +25,12 @@ public class LabkitClusterCommandTest {
 
 	private Context context = new Context();
 
-	public static void main(String... args) throws ExecutionException,
-		InterruptedException
+	public static void main(String... args)
 	{
 		new LabkitClusterCommandTest().startServerAndRun();
 	}
 
-	public void startServerAndRun() throws ExecutionException,
-		InterruptedException
+	public void startServerAndRun()
 	{
 		try (ParallelizationParadigm paradigm = TestParadigm.localImageJServer( "/home/arzt/Applications/Fiji.app/ImageJ-linux64", context ))
 		{
@@ -55,6 +53,7 @@ public class LabkitClusterCommandTest {
 		System.out.println("Results written to: " + OUTPUT_N5_DIRECTORY);
 	}
 
+	@SuppressWarnings("unused")
 	private <T> List<T> nCopies(T value, int size) {
 		return new AbstractList<T>() {
 

@@ -40,22 +40,22 @@ public class LabkitClusterCommand implements Command {
 	@Override
 	public void run() {
 		System.out.println(interval);
-		Interval interval = JsonIntervals.fromJson(this.interval);
+		Interval localInterval = JsonIntervals.fromJson(this.interval);
 		SpimDataInputImage data = new SpimDataInputImage(input, 0);
 		RandomAccessibleInterval<? extends NumericType<?>> image = data
 			.imageForSegmentation();
 		TrainableSegmentationSegmenter segmenter =
 			new TrainableSegmentationSegmenter(context, data);
 		segmenter.openModel(classifier);
-		IntervalView<UnsignedByteType> segmentation = createImg(interval);
+		IntervalView<UnsignedByteType> segmentation = createImg(localInterval);
 		segmenter.segment(image, segmentation);
 		MyN5.writeBlock(output, segmentation);
-		System.out.println(interval);
+		System.out.println(localInterval);
 	}
 
-	private IntervalView<UnsignedByteType> createImg(Interval interval) {
-		long[] offset = Intervals.minAsLongArray(interval);
-		final long[] dim = Intervals.dimensionsAsLongArray(interval);
+	private IntervalView<UnsignedByteType> createImg(Interval aInterval) {
+		long[] offset = Intervals.minAsLongArray(aInterval);
+		final long[] dim = Intervals.dimensionsAsLongArray(aInterval);
 		return Views.translate(ArrayImgs.unsignedBytes(dim), offset);
 	}
 

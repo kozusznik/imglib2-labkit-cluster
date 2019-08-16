@@ -40,8 +40,7 @@ public class InteractiveSegmentationDemo
 		
 		final HPCSettings settings = HPCSettingsGui.showDialog(context);
 
-		final HPCImageJServerRunner runner = new HPCFSTRPCServerRunnerUI(settings,
-			settings.isShutdownOnClose());
+		final HPCImageJServerRunner runner = new HPCFSTRPCServerRunnerUI(settings);
 		return TestFSTRPCParadigm.runner(runner, context);
 	}
 

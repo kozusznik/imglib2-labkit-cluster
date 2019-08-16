@@ -1,13 +1,13 @@
 
 package labkit_cluster.headless;
 
+import static org.junit.Assert.assertTrue;
+
 import net.imglib2.FinalInterval;
 import net.imglib2.util.Intervals;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class JsonIntervalsTest {
 

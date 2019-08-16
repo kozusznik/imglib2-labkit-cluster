@@ -13,16 +13,15 @@ import net.imglib2.labkit.segmentation.PredictionLayer;
 import org.scijava.Context;
 import org.scijava.command.Command;
 import org.scijava.command.CommandService;
+import org.scijava.parallel.ParallelService;
 import org.scijava.parallel.ParallelizationParadigm;
+import org.scijava.parallel.Status;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import org.scijava.ui.DialogPrompt.MessageType;
+import org.scijava.ui.UIService;
 
-import cz.it4i.parallel.RunningRemoteServer;
-import cz.it4i.parallel.fst.runners.HPCFSTRPCServerRunnerUI;
-import cz.it4i.parallel.fst.utils.TestFSTRPCParadigm;
-import cz.it4i.parallel.runners.HPCImageJServerRunner;
-import cz.it4i.parallel.runners.HPCSettings;
-import cz.it4i.parallel.ui.HPCSettingsGui;
+import cz.it4i.parallel.MultipleHostParadigm;
 import labkit_cluster.headless.SciJavaParallelSegmenter;
 import labkit_cluster.utils.CombineSegmentCommandCalls;
 
@@ -43,7 +42,7 @@ public class StartLabkitOnHPC implements Command {
 	}
 
 	private static int getSumOfCores(ParallelizationParadigm paradigm) {
-		List<Integer> coreList = ((RunningRemoteServer) paradigm).getNCores();
+		List<Integer> coreList = ((MultipleHostParadigm) paradigm).getNCores();
 		return coreList.stream().reduce(0, (a, b) -> a + b);
 	}
 
@@ -55,27 +54,30 @@ public class StartLabkitOnHPC implements Command {
 		return path;
 	}
 	
-	static ParallelizationParadigm initHpcParadigm( Context context )
-	{
-		
-		
-		final HPCSettings settings = HPCSettingsGui.showDialog(context);
-
-		final HPCImageJServerRunner runner = new HPCFSTRPCServerRunnerUI(settings);
-		return TestFSTRPCParadigm.runner(runner, context);
-	}
-
 	@Parameter
 	private Context context;
 	
 	@Parameter
 	private File file;
 	
+	@Parameter
+	private ParallelService parallelService; 
+	
 	@Override
 	public void run() {
 		String filename = file.toString();
 		fileExists(filename);
-		final ParallelizationParadigm paradigm = initHpcParadigm(context);
+		final ParallelizationParadigm paradigm = parallelService.getParadigm();
+		if (paradigm == null) {
+			context.getService(UIService.class).showDialog(
+				"There is no Parrallel Paradigm selected." +
+					" You can manage in Plugins>Scijava parallel>Paradigm Profiles Manager",
+				MessageType.WARNING_MESSAGE);
+			return;
+		}
+		if (paradigm.getStatus() == Status.NON_ACTIVE) {
+			paradigm.init();
+		}
 		final InputImage inputImage = new SpimDataInputImage( filename, 0 );
 		int nCores = getSumOfCores(paradigm);
 		final CombineSegmentCommandCalls calls = new CombineSegmentCommandCalls(context, paradigm, nCores);

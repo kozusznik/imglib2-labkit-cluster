@@ -1,18 +1,19 @@
 
 package labkit_cluster.headless;
 
-import bdv.util.BdvFunctions;
+import java.io.IOException;
+import java.util.stream.IntStream;
+
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.cell.CellGrid;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
+
 import org.janelia.saalfeldlab.n5.N5FSReader;
 import org.janelia.saalfeldlab.n5.imglib2.N5Utils;
-import org.junit.Test;
 
-import java.io.IOException;
-import java.util.stream.IntStream;
+import bdv.util.BdvFunctions;
 
 public class MyN5Test {
 

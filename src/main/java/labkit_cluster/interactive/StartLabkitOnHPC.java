@@ -70,7 +70,7 @@ public class StartLabkitOnHPC implements Command {
 		final ParallelizationParadigm paradigm = parallelService.getParadigm();
 		if (paradigm == null) {
 			context.getService(UIService.class).showDialog(
-				"There is no Parrallel Paradigm selected." +
+				"There is no Parallel Paradigm selected." +
 					" You can manage in Plugins>Scijava parallel>Paradigm Profiles Manager",
 				MessageType.WARNING_MESSAGE);
 			return;
@@ -85,8 +85,5 @@ public class StartLabkitOnHPC implements Command {
 		DefaultSegmentationModel segmentationModel = new DefaultSegmentationModel( inputImage, context,
 				( c, i ) -> new SciJavaParallelSegmenter( c, i, filename, calls ) );
 		LabkitFrame.show(segmentationModel, "Demonstrate SciJava-Parallel used for Segmentation");
-		
-		Runtime.getRuntime().addShutdownHook( new Thread( paradigm::close ) );
-		
 	}
 }

@@ -22,6 +22,7 @@ import org.scijava.ui.DialogPrompt.MessageType;
 import org.scijava.ui.UIService;
 
 import cz.it4i.parallel.MultipleHostParadigm;
+import cz.it4i.parallel.RPCParadigm;
 import labkit_cluster.headless.SciJavaParallelSegmenter;
 import labkit_cluster.utils.CombineSegmentCommandCalls;
 
@@ -67,7 +68,7 @@ public class StartLabkitOnHPC implements Command {
 	public void run() {
 		String filename = file.toString();
 		fileExists(filename);
-		final ParallelizationParadigm paradigm = parallelService.getParadigm();
+		final RPCParadigm paradigm = parallelService.getParadigmOfType(RPCParadigm.class);
 		if (paradigm == null) {
 			context.getService(UIService.class).showDialog(
 				"There is no Parallel Paradigm selected." +

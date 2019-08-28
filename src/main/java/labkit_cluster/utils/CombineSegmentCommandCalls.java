@@ -20,9 +20,9 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.labkit.utils.CheckedExceptionUtils;
 
 import org.scijava.Context;
-import org.scijava.parallel.ParallelizationParadigm;
 import org.scijava.plugin.Parameter;
 
+import cz.it4i.parallel.RPCParadigm;
 import labkit_cluster.interactive.SegmentCommand;
 
 /**
@@ -35,7 +35,7 @@ public class CombineSegmentCommandCalls {
 
 	private BlockingQueue<Task> queue;
 
-	private final ParallelizationParadigm paradigm;
+	private final RPCParadigm paradigm;
 
 	private int queueLength;
 
@@ -44,7 +44,7 @@ public class CombineSegmentCommandCalls {
 	
 	private CopyNamespace copyNamespace;
 	public CombineSegmentCommandCalls(Context context,
-		ParallelizationParadigm paradigm, int queueLength)
+		RPCParadigm paradigm, int queueLength)
 	{
 		context.inject(this);
 		copyNamespace = ops.namespace(CopyNamespace.class);

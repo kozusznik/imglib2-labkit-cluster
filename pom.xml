@@ -163,4 +163,10 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+	<distributionManagement>
+		<repository>
+			<id>it4i</id>
+			<url>https://artifactory.cs.vsb.cz/it4i/</url>
+		</repository>
+	</distributionManagement>
 </project>

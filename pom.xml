@@ -10,7 +10,7 @@
 
 	<groupId>net.imglib2</groupId>
 	<artifactId>imglib2-labkit-cluster</artifactId>
-	<version>0.1.0-RC-1</version>
+	<version>0.1.0</version>
 
 	<name>Labkit Cluster Integration</name>
 	<description>Labkit Cluster Integration</description>
@@ -123,7 +123,7 @@
 		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-labkit</artifactId>
-			<version>0.1.16-RC-1</version>
+			<version>0.1.16-HPC</version>
 		</dependency>
 		<dependency>
 			<groupId>io.scif</groupId>
@@ -137,7 +137,7 @@
 		<dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>scijava-parallel-fst</artifactId>
-			<version>4.0.0-RC-1</version>
+			<version>4.0.0</version>
 		</dependency>
 		<!-- Test dependencies -->
 		<dependency>
